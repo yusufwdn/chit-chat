@@ -41,8 +41,8 @@ io.on("connection", (socket) => {
   });
 
   /** Kirim pesan ke semua orang, kecuali yang mengirimnya */
-  socket.on("sendMessage", (message) => {
-    socket.broadcast.emit("sendMessage", message);
+  socket.on("sendMessage", (data) => {
+    socket.broadcast.emit("sendMessage", data);
   });
 });
 

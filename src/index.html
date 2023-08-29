@@ -13,30 +13,6 @@
   <body class="my-auto w-full">
     <div class="flex-1 justify-between flex flex-col h-screen">
       <div
-        class="flex sm:items-center justify-between px-3 pb-3 pt-1 border-b-2 border-gray-200"
-      >
-        <div class="relative flex items-center space-x-4">
-          <div class="relative">
-            <span class="absolute text-green-500 right-0 bottom-0">
-              <svg width="20" height="20">
-                <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
-              </svg>
-            </span>
-            <img
-              src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144"
-              alt="profile"
-              class="w-10 sm:w-16 h-10 sm:h-16 rounded-full"
-            />
-          </div>
-          <div class="flex flex-col leading-tight">
-            <div class="text-xl mt-1 flex items-center">
-              <span class="text-gray-700" id="username"></span>
-            </div>
-            <span class="text-small text-gray-600">Online</span>
-          </div>
-        </div>
-      </div>
-      <div
         id="messages"
         class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrollbar-touch h-screen"
       ></div>
@@ -47,6 +23,8 @@
             id="message"
             placeholder="Write your message"
             class="w-full focus:outline-none focus:placeholder-gray-500 text-gray-600 placeholder-gray-400 rounded-md py-3"
+            autofocus
+            required
           />
           <div class="absolute right-0 items-center inset-y-0 sm:flex">
             <button
@@ -80,21 +58,22 @@
       $("form").submit(function (e) {
         e.preventDefault();
 
-        var messageValue = $("#message").val();
+        var message = $("#message").val();
 
-        socket.emit("sendMessage", $("#message").val());
+        socket.emit("sendMessage", {
+          username: username,
+          message: message,
+        });
 
         $("#messages").append(`
         <div class="chat-message">
           <div class="flex items-end">
             <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-2 items-start">
-              <div>
-                <span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
-                  ${messageValue}
-                </span>
+              <div class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                <span class="block border-b mb-1 pb-1">Anda</span>
+                <span>${message}</span>
               </div>
             </div>
-            <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-1" />
           </div>
         </div>
         `);
@@ -104,18 +83,16 @@
         return false;
       });
 
-      socket.on("sendMessage", function (message) {
+      socket.on("sendMessage", function (data) {
         $("#messages").append(`
         <div class="chat-message">
           <div class="flex items-end justify-end">
             <div class="flex flex-col space-y-2 text-sm max-w-xs mx-2 order-1 items-end">
-              <div>
-                <span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
-                  ${message}
-                </span>
+              <div class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
+                <span class="block border-b mb-1 pb-1">${data.username}</span>
+                <span>${data.message}</span>
               </div>
             </div>
-            <img src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-2" />
           </div>
         </div>
         `);
